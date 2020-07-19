@@ -91,6 +91,9 @@ local chash_point_t = ffi.typeof("chash_point_t[?]")
 local function _precompute(nodes)
     local n, total_weight = 0, 0
     for id, weight in pairs(nodes) do
+        if weight < 0 then
+            return error("weight less than 0")
+        end
         n = n + 1
         total_weight = total_weight + weight
     end
@@ -290,6 +293,8 @@ end
 
 
 function _M.find(self, key)
+    if self.npoints <= 0 then return nil end
+
     local hash = crc32(tostring(key))
 
     local id, index = _find_id(self.points, self.npoints, hash)
@@ -299,6 +304,8 @@ end
 
 
 function _M.next(self, index)
+    if self.npoints <= 0 then return nil end
+    
     local new_index = (index + 1) % self.npoints
     local id = self.points[new_index].id
 

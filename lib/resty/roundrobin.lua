@@ -33,12 +33,18 @@ end
 local function get_gcd(nodes)
     local first_id, max_weight = next(nodes)
     if not first_id then
-        return error("empty nodes")
+        -- return error("empty nodes")
+        max_weight = 0
+    elseif max_weight < 0 then
+        return error("weight less than 0")
     end
 
     local only_key = first_id
     local gcd = max_weight
     for id, weight in next, nodes, first_id do
+        if weight < 0 then
+            return error("weight less than 0")
+        end
         only_key = nil
         gcd = _gcd(gcd, weight)
         max_weight = weight > max_weight and weight or max_weight
@@ -165,6 +171,10 @@ local function find(self)
     local only_key = self.only_key
     if only_key then
         return only_key
+    end
+
+    if self.max_weight <= 0 then
+        return nil
     end
 
     local nodes = self.nodes
